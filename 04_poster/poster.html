@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Póster – Demanda de pasajeros (Box-Jenkins)</title>
+    
+    <!-- Datos generados por Python -->
+    <script src="datos_poster.js"></script>
+
+    <!-- ==========================================
+         ESTILOS (CSS)
+         ========================================== -->
+    <style>
+        /* --- Variables Globales --- */
+        :root {
+            --n: #1a237e; /* Azul oscuro */
+            --a: #ffb300; /* Amarillo */
+            --bg: #eef1f8; /* Fondo de tarjetas */
+        }
+
+        /* --- Reset y Estructura Base --- */
+        * { box-sizing: border-box; }
+        
+        html, body {
+            margin: 0;
+            background: #37474f;
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            color: #1f2430;
+        }
+
+        #wrap {
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        #stage {
+            width: 3200px;
+            height: 1800px;
+            background: #fff;
+            position: relative;
+            transform-origin: 0 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Encabezado --- */
+        header {
+            height: 150px;
+            flex: none;
+            background: linear-gradient(100deg, #1a237e, #3949ab);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 50px;
+            border-bottom: 10px solid var(--a);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 50px;
+            line-height: 1.08;
+        }
+
+        header p {
+            margin: 6px 0 0;
+            font-size: 25px;
+            opacity: .92;
+        }
+
+        /* --- KPIs --- */
+        .kpis {
+            display: flex;
+            gap: 22px;
+        }
+
+        .kpi {
+            background: rgba(255, 255, 255, .14);
+            border-radius: 14px;
+            padding: 10px 26px;
+            text-align: center;
+        }
+
+        .kpi b {
+            display: block;
+            font-size: 44px;
+            color: var(--a);
+        }
+
+        .kpi span {
+            font-size: 20px;
+        }
+
+        /* --- Layout Principal (Grid) --- */
+        main {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 22px;
+            padding: 20px 30px 0;
+        }
+
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 0;
+        }
+
+        /* --- Tarjetas --- */
+        .card {
+            background: var(--bg);
+            border-left: 8px solid var(--a);
+            border-radius: 0 12px 12px 0;
+            padding: 14px 18px;
+            font-size: 23px;
+            line-height: 1.32;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .card h2 {
+            margin: 0 0 6px;
+            font-size: 31px;
+            color: var(--n);
+            flex: none;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .badge {
+            background: var(--n);
+            color: #fff;
+            border-radius: 50%;
+            min-width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+
+        /* --- Contenido de Tarjetas --- */
+        .txt { flex: none; }
+        .txt p { margin: 4px 0; }
+        .txt ul { margin: 4px 0; padding-left: 26px; }
+        .txt li { margin: 3px 0; }
+
+        /* --- Imágenes y Figuras --- */
+        .imgs {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .fig {
+            flex: 1 1 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fig img {
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            object-fit: contain;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #d5daea;
+            box-shadow: 0 3px 8px rgba(26, 35, 126, .12);
+            cursor: zoom-in;
+        }
+
+        .fig .cap {
+            flex: none;
+            font-size: 18px;
+            color: #555;
+            font-style: italic;
+            text-align: center;
+            margin-top: 3px;
+        }
+
+        /* --- Ecuaciones y Tablas --- */
+        .eq {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 23px;
+            line-height: 1.45;
+            background: #fff;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 6px 0;
+        }
+
+        table.t {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 20px;
+            background: #fff;
+        }
+
+        table.t th {
+            background: var(--n);
+            color: #fff;
+            padding: 3px 6px;
+        }
+
+        table.t td {
+            padding: 2px 6px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table.t tr.pk td {
+            background: #fff3cd;
+            font-weight: 700;
+        }
+
+        /* --- Footer --- */
+        footer {
+            height: 310px;
+            flex: none;
+            display: grid;
+            grid-template-columns: 1.3fr 1fr 1.05fr .85fr;
+            gap: 22px;
+            padding: 16px 30px 22px;
+        }
+
+        .concl { background: #e8eaf6; border-left-color: var(--n); }
+        .refs { font-size: 18px !important; line-height: 1.28 !important; }
+        
+        .gh a {
+            color: var(--n);
+            font-weight: 700;
+            word-break: break-all;
+            font-size: 21px;
+        }
+        .gh .imgs { flex-direction: row; justify-content: center; }
+        .gh .fig img { object-fit: contain; box-shadow: none; cursor: zoom-in; }
+        
+        .hi { color: var(--n); font-weight: 700; }
+        .warn { color: #b71c1c; font-weight: 700; }
+
+        /* --- Herramientas de Dibujo (Canvas) --- */
+        #draw {
+            position: absolute;
+            inset: 0;
+            width: 3200px;
+            height: 1800px;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .pen #draw {
+            pointer-events: auto;
+            cursor: crosshair;
+        }
+
+        /* --- Barra de Herramientas Flotante --- */
+        .toolbar {
+            opacity: .3;
+            transition: opacity .2s;
+            position: fixed;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            flex-direction: column;
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+            background: rgba(26, 35, 126, .92);
+            padding: 10px 6px;
+            border-radius: 30px;
+            align-items: center;
+        }
+
+        .toolbar:hover { opacity: 1; }
+
+        .toolbar button, .toolbar input {
+            height: 38px;
+            border: 0;
+            border-radius: 19px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .toolbar button {
+            width: 46px;
+            padding: 0;
+            background: #fff;
+            color: var(--n);
+            font-weight: 600;
+        }
+
+        .toolbar button.on { background: var(--a); }
+        .toolbar input { width: 42px; padding: 0; background: none; }
+
+        /* --- Lightbox (Zoom de imágenes) --- */
+        #lb {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .92);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            overflow: hidden;
+            cursor: zoom-out;
+        }
+
+        #lb img {
+            max-width: 94vw;
+            max-height: 94vh;
+            background: #fff;
+            transition: transform .1s;
+        }
+
+        /* --- Impresión (PDF) --- */
+        @media print {
+            @page { size: 3200px 1800px; margin: 0; }
+            html, body { background: #fff; }
+            .toolbar, #lb, #draw { display: none !important; }
+            #wrap { width: 3200px !important; height: 1800px !important; }
+            #stage { transform: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         ESTRUCTURA (HTML)
+         ========================================== -->
+    <div id="wrap">
+        <div id="stage">
+            <!-- Encabezado principal -->
+            <header>
+                <div>
+                    <h1>Modelado de la demanda de pasajeros de la Terminal de Transporte de Bogotá (2017–2026)</h1>
+                    <p contenteditable="true">
+                        <b>Luis Guevara </b> &nbsp;|&nbsp; 
+                        Econometría II 2026-2S · Universidad Nacional de Colombia &nbsp;|&nbsp; 
+                        Metodología Box-Jenkins
+                    </p>
+                </div>
+                <div class="kpis" id="kpis"></div>
+            </header>
+
+            <!-- Contenedor principal (Grid de 5 columnas) -->
+            <main id="main"></main>
+
+            <!-- Pie de página -->
+            <footer id="foot"></footer>
+
+            <!-- Canvas para dibujar a mano -->
+            <canvas id="draw" width="3200" height="1800"></canvas>
+        </div>
+    </div>
+
+    <!-- Barra de herramientas interactiva -->
+    <div class="toolbar">
+        <button id="bPen" title="Lápiz (P)">✏️</button>
+        <input type="color" id="col" value="#e53935">
+        <button id="bUndo" title="Deshacer (Z)">↶</button>
+        <button id="bClr" title="Borrar (C)">🧹</button>
+        <button id="bPdf" title="Imprimir / PDF">🖨️</button>
+    </div>
+
+    <!-- Lightbox para zoom de imágenes -->
+    <div id="lb">
+        <img id="lbi" alt="Zoom">
+    </div>
+
+    <!-- ==========================================
+         LÓGICA (JAVASCRIPT)
+         ========================================== -->
+    <script>
+        /* ----------------------------------------------------
+           1. VARIABLES GLOBALES Y DATOS DEL MODELO
+           ---------------------------------------------------- */
+        const D = (typeof datosPoster !== 'undefined') ? datosPoster : null;
+        
+        // Helpers de formateo
+        const f = (x, d = 3) => x == null ? '—' : Number(x).toFixed(d);
+        const sg = (x) => x < 0 ? '−' : '+';
+        const ab = (x) => Math.abs(x).toFixed(3);
+        const M = (n) => Number(n).toLocaleString('es-CO', { maximumFractionDigits: 0 });
+        
+        // Búsqueda en datos
+        const P = n => D ? D.params.find(p => p.n === n) : null;
+        const pass = D ? D.pruebas.filter(t => String(t['Conclusión']).startsWith('Pasa') || t['Conclusión'] === 'Aceptable') : [];
+        const fail = D ? D.pruebas.filter(t => !pass.includes(t)) : [];
+        const pico = D ? D.pronostico.reduce((a, b) => b.v > a.v ? b : a) : null;
+
+        /* ----------------------------------------------------
+           2. MANIFIESTO DE POSICIONES (Contenido del Póster)
+           Cada imagen va a su tarjeta por nombre de archivo.
+           [archivo, leyenda]. Si un archivo no existe, se omite.
+           ---------------------------------------------------- */
+        const G = 'img_poster/graficas/', T = 'img_poster/tablas/';
+        
+        const COLS = [
+            // Columna 1
+            [
+                { b: '1', h: 'Motivación económica', w: 0, html: `<p>La Terminal de Transporte registra los pasajeros que <b>salen</b> de Bogotá: un indicador de <span class="hi">movilidad interurbana</span> (ocio, turismo interno, visitas familiares), útil para dimensionar la terminal y la flota, anticipar temporadas altas y medir el choque del COVID-19.</p><p><b>Pregunta:</b> ¿qué tan bien se puede anticipar la demanda de los próximos 10 meses?</p>` },
+                { b: '2', h: 'Datos', w: 3, html: D ? `<p>Datos abiertos de la Terminal de Transporte de Bogotá. <b>T = ${D.T}</b> meses (${D.inicio} a ${D.fin}).</p>` : '', imgs: [[G + 'fig1_serie.png', 'Fig. 1. Serie histórica de pasajeros.'], [G + 'fig2_despachos.png', 'Fig. 2. Despachos (oferta de buses).'], [G + 'fig3_dispersion.png', 'Fig. 3. Relación oferta–demanda.']] },
+                { h: 'Estacionalidad', w: 1.4, imgs: [[G + 'fig11_estacionalidad.png', 'Fig. 4. Perfil estacional medio (sin COVID).']] }
+            ],
+            // Columna 2
+            [
+                { b: '①', h: 'Identificación', w: 0, html: `<p>Se usa <b>ln</b> para estabilizar la varianza. ADF/KPSS sobre la muestra completa son engañosos por el quiebre de 2020; en la submuestra post-pandemia <b>Δ ln y</b> no es estacionaria y <b>ΔΔ₁₂ ln y</b> sí ⇒ <b>d = 1, D = 1</b>.</p>` },
+                { h: 'Raíz unitaria', w: 1, imgs: [[T + 'tabla3_adf_kpss.png', 'Tabla 1. ADF (H0: raíz unitaria) y KPSS (H0: estacionaria).']] },
+                { h: 'Correlogramas', w: 2.4, html: `<p>La FAC con picos en 12 y 24 evidencia estacionalidad; el pico en 12 de ΔΔ₁₂ justifica el MA estacional.</p>`, imgs: [[G + 'fig4_fac_facp.png', 'Fig. 5. FAC/FACP de Δ ln y.'], [G + 'fig7_fac_facp_estacional.png', 'Fig. 6. FAC/FACP de ΔΔ₁₂ ln y.']] }
+            ],
+            // Columna 3
+            [
+                { b: '②', h: 'Estimación', w: 0, html: D ? `<p>SARIMAX(2,1,2)(0,1,1)₁₂ sobre ln(pasajeros + 1), con dummies de intervención y ln(despachos + 1) como regresor:</p>
+                <div class="eq">(1 ${sg(-P('ar.L1').c)} ${ab(P('ar.L1').c)}B ${sg(-P('ar.L2').c)} ${ab(P('ar.L2').c)}B²)(1−B)(1−B¹²)[ln Yₜ − ${f(P('Despachos_Log').c)}·ln Despₜ − (${f(P('Pandemia').c)})·Pandₜ − (${f(P('Dic2019').c)})·Dic19ₜ]<br>= (1 ${sg(P('ma.L1').c)} ${ab(P('ma.L1').c)}B ${sg(P('ma.L2').c)} ${ab(P('ma.L2').c)}B²)(1 ${sg(P('ma.S.L12').c)} ${ab(P('ma.S.L12').c)}B¹²) εₜ</div>
+                <p>AIC = <b>${f(D.aic, 2)}</b> · BIC = ${f(D.bic, 2)} · LogLik = ${f(D.loglik, 2)}</p>` : '' },
+                { h: 'Coeficientes', w: 1.2, imgs: [[T + 'tabla1_coeficientes.png', 'Tabla 2. Coeficientes y p-valores.']] },
+                { h: 'Modelos candidatos', w: 1.6, imgs: [[T + 'tabla4_candidatos.png', 'Tabla 3. Menor AIC = mejor.']] }
+            ],
+            // Columna 4
+            [
+                { b: '③', h: 'Validación', w: 0, html: D ? `<p>Pasan <b>${pass.length} de ${D.pruebas.length}</b> pruebas${fail.length ? `; falla: <span class="warn">${fail.map(t => t.Prueba).join(', ')}</span> (p = ${fail.map(t => t.Valor).join(', ')})` : ''}. Raíces fuera del círculo unitario (|z| mín. AR = ${f(D.raiz_ar_min)}, MA = ${f(D.raiz_ma_min)}).</p>` : '' },
+                { h: 'Diagnóstico de residuos', w: 2.2, imgs: [[G + 'fig8_residuos_panel.png', 'Fig. 7. Residuos, ACF, histograma y Q-Q.'], [G + 'fig5_residuales.png', 'Fig. 8. Residuos estandarizados post-GARCH.']] },
+                { h: 'Pruebas y raíces', w: 1.6, imgs: [[T + 'tabla2_pruebas.png', 'Tabla 4. Pruebas de validación.'], [G + 'fig9_raices.png', 'Fig. 9. Raíces AR y MA.']] }
+            ],
+            // Columna 5
+            [
+                { b: '④', h: 'Pronóstico (10 meses)', w: 2.1, html: D ? `<p>${D.pronostico[0].mes} a ${D.pronostico[9].mes}. Pico: <b>${pico.mes} ≈ ${M(pico.v)}</b> pasajeros.</p>` : '', imgs: [[G + 'fig6_pronostico.png', 'Fig. 10. Pronóstico con IC 95 %.']] },
+                { h: 'Tabla de pronóstico', w: 0, html: D ? `<table class="t"><tr><th>Mes</th><th>Pronóstico</th><th>IC inf.</th><th>IC sup.</th></tr>${D.pronostico.map(r => `<tr class="${r.mes === pico.mes ? 'pk' : ''}"><td>${r.mes}</td><td>${M(r.v)}</td><td>${M(r.li)}</td><td>${M(r.ls)}</td></tr>`).join('')}</table>` : '' },
+                { h: 'Back-test (12 meses)', w: 1.3, html: D && D.mape_backtest != null ? `<p>MAPE = <b>${f(D.mape_backtest, 2)} %</b></p>` : '', imgs: [[G + 'fig10_backtest.png', 'Fig. 11. Observado vs. predicho.']] }
+            ]
+        ];
+
+        const FOOT = [
+            { c: 'concl', h: 'Conclusiones', html: D ? `<ul><li>Serie mensual con <b>estacionalidad anual</b> marcada y un choque estructural en 2020, tratado con dummies.</li><li>El modelo SARIMAX(2,1,2)(0,1,1)₁₂ alcanza AIC = <b>${f(D.aic, 2)}</b>; la elasticidad de despachos es <b>${f(P('Despachos_Log').c, 2)}</b> (relación oferta–demanda muy estrecha).</li><li>Validación: ${pass.length}/${D.pruebas.length} pruebas superadas${fail.length ? `; ${fail.map(t => t.Prueba).join(', ')} queda en el límite` : ''}.</li><li>Pronóstico: pico en ${pico.mes} (≈ ${M(pico.v)}).</li></ul>` : '' },
+            { h: 'Limitaciones', html: D ? `<ul><li>El pronóstico supone <b>despachos constantes</b> en su último valor; despachos no es exógena.</li><li>El back-test usa los despachos <b>reales</b> del periodo de prueba${D.mape_backtest != null ? ` (MAPE ${f(D.mape_backtest, 1)} % es un piso optimista)` : ''}.</li><li>Dummy de pandemia constante (mar–dic 2020).</li></ul>` : '' },
+            { c: 'refs', h: 'Referencias', html: `Box, Jenkins, Reinsel &amp; Ljung (2015). <i>Time Series Analysis</i>, 5ª ed. Wiley.<br>Enders (2014). <i>Applied Econometric Time Series</i>, 4ª ed. Wiley.<br>Guerrero (2003). <i>Análisis estadístico de series de tiempo económicas</i>. UAM.<br>Hyndman &amp; Athanasopoulos (2021). <i>Forecasting: Principles and Practice</i>, 3ª ed.<br>Dickey &amp; Fuller (1979); Kwiatkowski et al. (1992); Ljung &amp; Box (1978); Engle (1982); Bollerslev (1986).<br>Datos: Terminal de Transporte de Bogotá, datos abiertos.` },
+            { c: 'gh', h: 'Código y datos', html: `<p>Repositorio público y reproducible (rutas relativas):</p><p><a href="https://github.com/SchayanneDevp/Poster_Eonometria_II" target="_blank">github.com/SchayanneDevp/Poster_Eonometria_II</a></p>`, imgs: [['qr_github.png', 'Escanea para clonar']] }
+        ];
+
+        /* ----------------------------------------------------
+           3. CONSTRUCCIÓN DEL DOM (Renderizado dinámico)
+           ---------------------------------------------------- */
+        const v = Date.now(); // Cache-buster para imágenes
+
+        function card(c) {
+            const d = document.createElement('div');
+            d.className = 'card ' + (c.c || '');
+            
+            // Título y contenido de texto
+            d.innerHTML = `<h2>${c.b ? `<span class="badge">${c.b}</span>` : ''}${c.h}</h2>` + (c.html ? `<div class="txt">${c.html}</div>` : '');
+            
+            // Imágenes
+            if (c.imgs) {
+                const w = document.createElement('div');
+                w.className = 'imgs';
+                d.appendChild(w);
+                
+                c.imgs.forEach(([src, cap]) => {
+                    const fg = document.createElement('div');
+                    fg.className = 'fig';
+                    const im = new Image();
+                    im.src = src + '?v=' + v;
+                    
+                    // Manejo de errores y fallback de ruta
+                    im.onerror = () => {
+                        if (im.src.includes('img_poster/') && !im.dataset.fb) {
+                            im.dataset.fb = 1;
+                            im.src = src.replace('img_poster/', 'img/') + '?v=' + v;
+                            return;
+                        }
+                        fg.remove();
+                        if (!w.children.length && !c.html) d.remove();
+                    };
+                    
+                    im.onclick = () => { if (!pen) openLb(im.src); };
+                    
+                    fg.appendChild(im);
+                    fg.insertAdjacentHTML('beforeend', `<div class="cap">${cap}</div>`);
+                    w.appendChild(fg);
+                });
+            }
+            
+            d.style.flex = c.w ? `${c.w} 1 0` : '0 0 auto';
+            return d;
+        }
+
+        const main = document.getElementById('main');
+        COLS.forEach(cs => {
+            const col = document.createElement('div');
+            col.className = 'col';
+            cs.forEach(c => col.appendChild(card(c)));
+            main.appendChild(col);
+        });
+
+        const foot = document.getElementById('foot');
+        FOOT.forEach(c => foot.appendChild(card(c)));
+
+        // Renderizar KPIs
+        if (D) {
+            document.getElementById('kpis').innerHTML = `
+                <div class="kpi"><b>${D.T}</b><span>meses (T)</span></div>
+                <div class="kpi"><b>${f(D.aic, 1)}</b><span>AIC</span></div>
+                <div class="kpi"><b>${pico ? M(pico.v / 1000) + ' mil' : '—'}</b><span>pico ${pico ? pico.mes : ''}</span></div>
+            `;
+        }
+
+        /* ----------------------------------------------------
+           4. AJUSTE A PANTALLA (Responsive del lienzo)
+           ---------------------------------------------------- */
+        const W = 3200, H = 1800, stage = document.getElementById('stage'), wrap = document.getElementById('wrap');
+        let sc = 1;
+
+        function fit() {
+            sc = Math.min(innerWidth / W, innerHeight / H);
+            stage.style.transform = 'scale(' + sc + ')';
+            wrap.style.width = W * sc + 'px';
+            wrap.style.height = H * sc + 'px';
+        }
+        
+        addEventListener('resize', fit);
+        fit();
+
+        /* ----------------------------------------------------
+           5. ZOOM (Lightbox)
+           ---------------------------------------------------- */
+        const lb = document.getElementById('lb'), lbi = document.getElementById('lbi');
+        let z = 1;
+
+        function openLb(s) {
+            lbi.src = s;
+            z = 1;
+            lbi.style.transform = '';
+            lb.style.display = 'flex';
+        }
+
+        lb.onclick = () => lb.style.display = 'none';
+        
+        lb.addEventListener('wheel', e => {
+            e.preventDefault();
+            z = Math.min(6, Math.max(.5, z * (e.deltaY < 0 ? 1.15 : .87)));
+            lbi.style.transform = 'scale(' + z + ')';
+        }, { passive: false });
+
+        /* ----------------------------------------------------
+           6. LÁPIZ (Herramienta de dibujo en Canvas)
+           ---------------------------------------------------- */
+        const cv = document.getElementById('draw'), cx = cv.getContext('2d'), bPen = document.getElementById('bPen');
+        let pen = false, drawing = false, strokes = [], cur = null;
+
+        function redraw() {
+            cx.clearRect(0, 0, W, H);
+            strokes.forEach(s => {
+                cx.strokeStyle = s.c;
+                cx.lineWidth = 6;
+                cx.lineCap = cx.lineJoin = 'round';
+                cx.beginPath();
+                s.p.forEach((q, i) => i ? cx.lineTo(q[0], q[1]) : cx.moveTo(q[0], q[1]));
+                cx.stroke();
+            });
+        }
+
+        function pos(e) {
+            const r = cv.getBoundingClientRect();
+            return [(e.clientX - r.left) / sc, (e.clientY - r.top) / sc];
+        }
+
+        function togglePen() {
+            pen = !pen;
+            document.body.classList.toggle('pen', pen);
+            bPen.classList.toggle('on', pen);
+        }
+
+        bPen.onclick = togglePen;
+
+        cv.addEventListener('pointerdown', e => {
+            if (!pen) return;
+            drawing = true;
+            cv.setPointerCapture(e.pointerId);
+            cur = { c: document.getElementById('col').value, p: [pos(e)] };
+            strokes.push(cur);
+        });
+
+        cv.addEventListener('pointermove', e => {
+            if (!drawing) return;
+            cur.p.push(pos(e));
+            redraw();
+        });
+
+        cv.addEventListener('pointerup', () => drawing = false);
+
+        const undo = () => { strokes.pop(); redraw(); };
+        const clr = () => { strokes = []; redraw(); };
+
+        document.getElementById('bUndo').onclick = undo;
+        document.getElementById('bClr').onclick = clr;
+        document.getElementById('bPdf').onclick = () => window.print();
+
+        addEventListener('keydown', e => {
+            if (e.target.isContentEditable) return;
+            const k = e.key.toLowerCase();
+            if (k === 'p') togglePen();
+            else if (k === 'z') undo();
+            else if (k === 'c') clr();
+            else if (k === 'escape') lb.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

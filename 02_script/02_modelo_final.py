@@ -316,6 +316,6 @@ datos_dinamicos = {
 with open(POSTER_DIR / "datos.js", "w", encoding="utf-8") as f:
     f.write(f"const datosDinamicos = {json.dumps(datos_dinamicos, ensure_ascii=False)};")
 
-print("\n✅ Script finalizado. Revisa las carpetas:")
+print("\n Script finalizado. Revisa las carpetas:")
 print(f"  - Gráficas: {IMG_GRAF}")
 print(f"  - Tablas:   {IMG_TABL}")

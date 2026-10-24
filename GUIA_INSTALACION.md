@@ -7,215 +7,264 @@
 
 ---
 
-## 1. Descripción del proyecto
+## 1. Guía de inicio rápido
 
-Este proyecto tiene como objetivo modelar y pronosticar la serie de tiempo mensual de pasajeros que salen de la Terminal de Transporte de Bogotá durante el periodo 2017-2026. Para ello, se aplica la metodología Box-Jenkins (Guerrero, 2003; Enders, 2014), complementada con transformaciones logarítmicas, variables exógenas (despachos de buses) y modelos de heterocedasticidad condicional autorregresiva generalizada (GARCH), con el propósito de analizar y modelar el comportamiento de la varianza.
+Esta sección presenta los pasos necesarios para configurar el entorno de trabajo y ejecutar correctamente el proyecto. Está dirigida a las personas que descarguen o clonen el repositorio por primera vez.
 
-El repositorio contiene el código fuente, las bases de datos procesadas, los resultados gráficos y un póster interactivo que resume los principales hallazgos del análisis.
+### 1.1. Requisitos previos
 
-## 2. Motivación económica
+Antes de comenzar, asegúrese de tener instaladas las siguientes herramientas:
 
-La serie analizada representa el flujo de pasajeros que salen de Bogotá por transporte terrestre intermunicipal. Este indicador puede utilizarse como una aproximación a la actividad económica y a la movilidad regional, dado que refleja parte de la demanda de transporte entre diferentes regiones del país.
+- **Anaconda o Miniconda:** para gestionar el entorno virtual de Python y sus dependencias.
+- **Visual Studio Code (VS Code):** como editor de código y entorno de desarrollo.
+- **Git:** herramienta opcional para clonar el repositorio desde la terminal.
 
-La caída abrupta observada en 2020, asociada con la pandemia por COVID-19 y las restricciones de movilidad, evidencia la importancia de utilizar modelos capaces de representar cambios atípicos y posibles alteraciones estructurales en las series económicas. El análisis busca generar pronósticos que puedan contribuir a la planificación de las operaciones logísticas y de la infraestructura de transporte.
+### 1.2. Extensiones necesarias en Visual Studio Code
 
-## 3. Estructura del proyecto
+Para facilitar la ejecución del código, la inspección de los datos y la detección de errores, se recomienda instalar las siguientes extensiones desde el panel de extensiones de VS Code, accesible mediante `Ctrl + Shift + X`.
 
-El repositorio está organizado de la siguiente manera:
+- **Python (Microsoft):** permite ejecutar scripts, seleccionar el intérprete y administrar las herramientas de desarrollo de Python.
+- **Pylance (Microsoft):** facilita el análisis estático del código, la detección de errores y las sugerencias de programación.
+- **Jupyter (Microsoft):** permite ejecutar y visualizar las celdas de código delimitadas mediante `# %%` dentro de los scripts.
+- **Data Wrangler (Microsoft):** extensión opcional que facilita la inspección y transformación de conjuntos de datos tabulares, incluidos archivos CSV.
+- **Rainbow CSV:** extensión opcional que mejora la lectura de archivos CSV mediante la diferenciación visual de sus columnas.
 
-```text
-1_Poster_terminal_2017_2026/
-│
-├── 01_datos/
-│   ├── raw/
-│   │   └── datal_2017_2026.csv
-│   └── processed/
-│       └── serie_limpia_2017_2026.csv
-│
-├── 02_script/
-│   ├── 00_limpieza_data.py
-│   ├── 01_paso_paso_para_hallar_modelo.py
-│   └── 02_modelo_final.py
-│
-├── 03_resultados/
-│   └── historia/
-│
-├── 04_poster/
-│   ├── img/
-│   │   ├── graficas/
-│   │   └── tablas/
-│   ├── index.html
-│   ├── styles.css
-│   └── script.js
-│
-├── environment.yml
-├── requirements.txt
-├── README.md
-└── INSTRUCCIONES.md
-```
+### 1.3. Configuración del entorno virtual
 
-La carpeta `01_datos/raw/` contiene los datos originales, mientras que `01_datos/processed/` almacena los datos preparados para el análisis. La carpeta `02_script/` reúne los programas de limpieza, modelado y generación de resultados. Por su parte, `03_resultados/` contiene las gráficas generadas durante el proceso de modelado y `04_poster/` reúne los archivos necesarios para visualizar el póster interactivo.
+Abra una terminal integrada en VS Code desde la carpeta raíz del proyecto, donde se encuentra este archivo `README.md`.
 
-## 4. Requisitos previos
+Ejecute los siguientes comandos en el orden indicado.
 
-Para ejecutar el proyecto, se requieren las siguientes herramientas:
+**Paso 1. Crear el entorno de Conda**
 
-- Python 3.11 con el gestor de paquetes `pip`.
-- Anaconda o Miniconda para administrar el entorno virtual.
-- Visual Studio Code como editor de código recomendado.
-- Las extensiones Python, Pylance y Jupyter para Visual Studio Code.
-- Git, de manera opcional, para clonar el repositorio.
-
-Las dependencias de Python se especifican en el archivo `requirements.txt` e incluyen las siguientes bibliotecas:
-
-- `pandas`
-- `numpy`
-- `matplotlib`
-- `seaborn`
-- `statsmodels`
-- `scipy`
-- `arch`
-- `pmdarima`
-- `tabulate`
-
-## 5. Instalación y ejecución
-
-### 5.1. Clonar el repositorio
-
-Abra una terminal y ejecute los siguientes comandos:
-
-```bash
-git clone <URL_DEL_REPOSITORIO>
-cd 1_Poster_terminal_2017_2026
-```
-
-Sustituya `<URL_DEL_REPOSITORIO>` por la dirección real del repositorio.
-
-### 5.2. Crear el entorno de Conda
-
-Ejecute el siguiente comando desde el directorio raíz del proyecto:
+El archivo `environment.yml` contiene la configuración del entorno y las dependencias declaradas para el proyecto.
 
 ```bash
 conda env create -f environment.yml
 ```
 
-### 5.3. Activar el entorno
-
-Active el entorno definido en el archivo `environment.yml`:
+**Paso 2. Activar el entorno**
 
 ```bash
 conda activate poster_2017
 ```
 
-### 5.4. Instalar las dependencias
+**Paso 3. Instalar las dependencias adicionales**
 
-Instale las bibliotecas especificadas en el archivo `requirements.txt`:
+Instale las bibliotecas de Python declaradas en el archivo `requirements.txt`.
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5.5. Ejecutar el análisis
+**Paso 4. Instalar el navegador requerido para exportar el PDF**
 
-Para ejecutar el proceso de modelado y generar las gráficas, tablas y resultados correspondientes, utilice:
+Playwright utiliza Chromium para procesar el documento HTML y generar el archivo PDF.
+
+```bash
+playwright install chromium
+```
+
+Si alguno de estos comandos presenta errores, verifique que Conda esté instalado correctamente, que se encuentre en la carpeta raíz del proyecto y que los archivos de configuración estén disponibles.
+
+### 1.4. Selección del intérprete de Python en VS Code
+
+La selección del intérprete correcto es indispensable para que VS Code utilice las bibliotecas instaladas en el entorno del proyecto.
+
+Siga estos pasos:
+
+1. Abra la paleta de comandos mediante `Ctrl + Shift + P`. En macOS, utilice `Cmd + Shift + P`.
+2. Escriba `Python: Select Interpreter`.
+3. Seleccione el entorno de Conda denominado `poster_2017`.
+4. Verifique que la ruta corresponda al intérprete del entorno creado. En Windows, puede presentar una estructura similar a la siguiente:
+
+```text
+...\anaconda3\envs\poster_2017\python.exe
+```
+
+Una vez seleccionado el intérprete, el entorno estará preparado para ejecutar los scripts del proyecto.
+
+---
+
+## 2. Pipeline de ejecución
+
+El proyecto utiliza un flujo de procesamiento secuencial en el que los datos, los resultados estadísticos, las gráficas y los documentos finales se generan mediante scripts de Python.
+
+**Regla fundamental:** los archivos HTML y JavaScript que contienen los resultados del póster se generan o actualizan a partir de los scripts de procesamiento. Por tanto, no deben modificarse manualmente cuando el cambio corresponda a resultados estadísticos, tablas o gráficas que puedan regenerarse automáticamente.
+
+Para actualizar el proyecto, ejecute los scripts en el siguiente orden desde la terminal integrada de VS Code.
+
+### 2.1. Limpieza y preparación de los datos
+
+```bash
+python 02_script/00_limpieza_data.py
+```
+
+Este script procesa los archivos CSV originales ubicados en `01_datos/raw/`, realiza las tareas de limpieza definidas en el código, verifica los valores faltantes y genera los archivos procesados en `01_datos/processed/`.
+
+### 2.2. Desarrollo de la metodología y evaluación de modelos
 
 ```bash
 python 02_script/01_paso_paso_para_hallar_modelo.py
 ```
 
-### 5.6. Visualizar el póster
+Este script desarrolla el procedimiento metodológico, genera gráficas exploratorias, aplica las pruebas de estacionariedad ADF y KPSS, evalúa los cinco modelos candidatos y documenta la evolución del proceso de selección en la carpeta `03_resultados/`.
 
-Abra el archivo `04_poster/index.html` en un navegador web para consultar el póster interactivo. Las funcionalidades de visualización dependerán de la implementación de los archivos `styles.css` y `script.js`.
+### 2.3. Estimación del modelo final
 
-## 6. Descripción de los scripts
+```bash
+python 02_script/02_modelo_final.py
+```
 
-### 6.1. Script de limpieza y preparación
+Este script estima el modelo seleccionado, identificado en la documentación del proyecto como SARIMAX complementado con GARCH. También genera las gráficas y tablas finales que se almacenan en `04_poster/img/`.
 
-**Archivo:** `00_limpieza_data.py`
+### 2.4. Actualización de los datos del póster
 
-Este script carga el archivo CSV original, transforma la columna de fecha y prepara el índice temporal con frecuencia mensual (`MS`). También verifica la presencia de valores nulos y guarda los datos preparados en la carpeta `01_datos/processed/`.
+```bash
+python 02_script/03_datos_poster.py
+```
 
-### 6.2. Script de desarrollo metodológico
+Este script extrae del modelo final las estadísticas y los resultados utilizados en el póster, incluidos el AIC, los coeficientes y los resultados de las pruebas estadísticas. Posteriormente, actualiza el archivo `04_poster/datos_poster.js`.
 
-**Archivo:** `01_paso_paso_para_hallar_modelo.py`
+De esta manera, el contenido numérico del póster se mantiene vinculado a los resultados generados por el código.
 
-Este programa documenta las etapas del análisis de la serie de tiempo. Entre sus funciones se encuentran:
+### 2.5. Preparación de imágenes y generación del código QR
 
-- Generación de gráficas de la serie histórica.
-- Construcción de las funciones de autocorrelación (FAC) y autocorrelación parcial (FACP).
-- Aplicación de pruebas de raíz unitaria, incluidas las pruebas ADF y KPSS.
-- Estimación y comparación de modelos SARIMA y SARIMAX.
-- Evaluación de transformaciones logarítmicas y variables indicadoras de intervención.
-- Incorporación de la variable exógena correspondiente a los despachos de buses.
-- Evaluación de modelos GARCH para estudiar la dinámica de la varianza condicional.
-- Diagnóstico de los residuos y evaluación del modelo seleccionado.
-- Generación de pronósticos y evaluación mediante *backtesting*.
+```bash
+python 04_poster/preparar_imagenes.py
+```
 
-Según la descripción del proyecto, el script también genera documentación sobre las etapas del proceso de modelado.
+Este script prepara las imágenes utilizadas en el póster, recorta los márgenes blancos según la lógica implementada y genera el código QR del repositorio.
 
-### 6.3. Script del modelo final
+### 2.6. Exportación del póster a PDF
 
-**Archivo:** `02_modelo_final.py`
+```bash
+python 04_poster/exportar_pdf.py
+```
 
-Este script está destinado a generar los recursos gráficos y tabulares del póster web, incluidos los coeficientes estimados, las pruebas de diagnóstico y los resultados del pronóstico final.
+Este script utiliza Playwright y Chromium para procesar el documento `poster.html` junto con sus recursos visuales y datos asociados, y exportar el resultado a un archivo PDF preparado para su impresión.
 
-## 7. Resultados principales
+### 2.7. Visualización del resultado final
 
-De acuerdo con los resultados reportados en el proyecto, el modelo seleccionado es un **SARIMAX(2,1,2)(0,1,1,12)**, estimado con transformación logarítmica, una variable exógena correspondiente a los despachos de buses y variables indicadoras de intervención para determinados periodos. Adicionalmente, se reporta la estimación de un modelo GARCH(1,1) para analizar la heterocedasticidad condicional.
+El proyecto ofrece dos formas principales de consultar el póster generado.
 
-### 7.1. Especificación del modelo
+**Póster interactivo**
 
-La especificación reportada incorpora los siguientes componentes:
+Abra el archivo `04_poster/poster.html` en un navegador web. También puede utilizar la extensión Live Server de VS Code para visualizarlo durante el desarrollo.
 
-- **Componente no estacional:** SARIMAX(2,1,2).
-- **Componente estacional:** (0,1,1,12), con periodicidad anual para datos mensuales.
-- **Transformación:** logaritmo de la variable de pasajeros.
-- **Variable exógena:** despachos de buses.
-- **Variables de intervención:** indicadores asociados con la pandemia de 2020 y diciembre de 2019 y 2020.
-- **Modelo complementario de varianza:** GARCH(1,1).
+La interfaz incorpora las herramientas de interacción implementadas en el proyecto, entre ellas el acercamiento y alejamiento de la visualización y las anotaciones, si estas funciones se encuentran habilitadas en la versión actual.
 
-### 7.2. Indicadores reportados
+**Póster en formato PDF**
+
+Abra el archivo `04_poster/poster.pdf` para consultar la versión exportada, destinada a la impresión y distribución.
+
+---
+
+## 3. Estructura del proyecto
+
+La organización de los directorios separa los datos originales, los datos procesados, los scripts de Python, los resultados estadísticos y los archivos necesarios para generar el póster.
+
+```text
+1_Poster_terminal_2017_2026/
+|
+|-- 01_datos/
+|   |-- raw/                       # Datos originales
+|   `-- processed/                 # Datos procesados
+|
+|-- 02_script/
+|   |-- 00_limpieza_data.py
+|   |-- 01_paso_paso_para_hallar_modelo.py
+|   |-- 02_modelo_final.py
+|   `-- 03_datos_poster.py
+|
+|-- 03_resultados/                 # Resultados y gráficas metodológicas
+|
+|-- 04_poster/
+|   |-- img/                       # Gráficas y tablas originales
+|   |-- img_poster/                # Imágenes preparadas para el póster
+|   |-- preparar_imagenes.py       # Preparación de imágenes y código QR
+|   |-- exportar_pdf.py            # Exportación del póster a PDF
+|   |-- poster.html                # Documento principal del póster
+|   `-- datos_poster.js            # Datos utilizados por el póster
+|
+|-- environment.yml                # Configuración del entorno Conda
+|-- requirements.txt               # Dependencias adicionales de Python
+`-- README.md                      # Documentación principal
+```
+
+Esta estructura representa la organización prevista del proyecto. Los nombres y las ubicaciones deben coincidir con los archivos existentes en el repositorio.
+
+---
+
+## 4. Documentación metodológica
+
+### 4.1. Descripción del modelo
+
+El proyecto tiene como objetivo modelar la serie mensual de pasajeros de la Terminal de Transporte de Bogotá durante el período 2017-2026 mediante técnicas de econometría de series de tiempo.
+
+La estrategia metodológica se fundamenta en el enfoque de Box-Jenkins y contempla la transformación logarítmica de la variable de interés, la incorporación del número de despachos como variable exógena y el uso de variables indicadoras (*dummies*) para representar el choque estructural asociado con la pandemia de COVID-19.
+
+El modelo final documentado corresponde a un modelo **SARIMAX(2,1,2)(0,1,1)₁₂**, complementado con un modelo **GARCH(1,1)** para representar la dinámica de la varianza condicional.
+
+El componente SARIMAX permite modelar la dependencia temporal, la diferenciación regular y estacional, así como la relación con la variable exógena. Por su parte, el componente GARCH se utiliza para estudiar la dinámica de la volatilidad condicional de los errores.
+
+La especificación definitiva, los supuestos de estimación y la interpretación de los parámetros deben verificarse con los scripts y los resultados estadísticos del modelo estimado.
+
+### 4.2. Resultados principales
+
+Los siguientes valores corresponden a los resultados reportados para la versión documentada del proyecto.
 
 | Indicador | Resultado reportado |
-|---|---:|
+|:--|--:|
 | Criterio de información de Akaike (AIC) | -138.70 |
+| Curtosis de los residuos | 3.33 |
 | Prueba de Ljung-Box, rezago 6 | 0.1922 |
 | Prueba ARCH | 0.1273 |
-| Curtosis | 3.33 |
-| Error porcentual absoluto medio (MAPE) del *backtesting* | 5,02 % |
+| Error porcentual absoluto medio (MAPE) en backtesting | 5.02 % |
+| Pronóstico de pasajeros para diciembre de 2026 | Aproximadamente 1,84 millones |
 
-Estos valores corresponden a los resultados descritos en el proyecto y deben interpretarse de acuerdo con la definición de cada estadístico, sus hipótesis y el procedimiento de evaluación utilizado.
+**Consideraciones para la interpretación de los resultados:**
 
-En particular, es necesario verificar si los valores de Ljung-Box y ARCH corresponden a estadísticos de prueba o valores *p*. La interpretación de los resultados cambia según esta distinción.
+- **AIC:** permite comparar modelos estimados sobre una base de datos y una especificación de verosimilitud comparables. En igualdad de condiciones, un valor menor favorece al modelo con mejor equilibrio entre ajuste y complejidad.
+- **Curtosis de los residuos:** el valor reportado de 3,33 se encuentra relativamente próximo al valor de referencia de 3 para una distribución normal cuando se utiliza la curtosis ordinaria de Pearson. Esta proximidad, por sí sola, no demuestra normalidad.
+- **Prueba de Ljung-Box:** el resultado debe interpretarse según el tipo de estadístico reportado. Si corresponde al valor *p*, un resultado de 0,1922 no permite rechazar la hipótesis nula de ausencia de autocorrelación conjunta hasta el rezago evaluado al nivel de significancia del 5 %.
+- **Prueba ARCH:** si 0,1273 corresponde al valor *p* de la prueba, no se rechaza la hipótesis nula de ausencia de efectos ARCH al nivel del 5 %. La conclusión debe confirmarse verificando el estadístico y el valor *p* generados por el código.
+- **MAPE:** el valor reportado de 5,02 % resume el error porcentual absoluto medio del procedimiento de backtesting. Su interpretación depende del período de evaluación y del método de validación utilizados.
+- **Pronóstico:** se reporta una proyección aproximada de 1,84 millones de pasajeros para diciembre de 2026. Este valor debe interpretarse como una estimación del modelo, no como un dato observado.
 
-### 7.3. Pronóstico
+Los resultados deben actualizarse después de ejecutar el pipeline completo. Las cifras consignadas en esta sección no se consideran verificadas de manera independiente hasta contrastarlas con las salidas de la última ejecución.
 
-El proyecto reporta un pronóstico a diez meses y una proyección aproximada de 1,84 millones de pasajeros para diciembre de 2026. Este resultado pretende representar el comportamiento estacional de la demanda de transporte terrestre al final del año.
+---
 
-La proyección debe interpretarse como una estimación condicionada a la especificación del modelo, a la información disponible y a los valores futuros utilizados para la variable exógena de despachos. Su precisión debe evaluarse mediante los resultados del *backtesting* y, cuando corresponda, mediante intervalos de predicción.
+## 5. Referencias bibliográficas
 
-## 8. Conclusiones
+Las siguientes referencias corresponden a las obras metodológicas reportadas en el proyecto. Antes de la entrega académica definitiva, se recomienda completar y verificar los datos editoriales, los títulos exactos y los identificadores bibliográficos disponibles.
 
-1. La transformación logarítmica se incorporó para modelar la serie en una escala que puede reducir la variación relativa y facilitar el análisis de la tendencia y la estacionalidad. Su efectividad debe verificarse mediante el análisis de los residuos y de la estabilidad de la varianza.
+- Bollerslev, T. (1986). Generalized autoregressive conditional heteroskedasticity. *Journal of Econometrics, 31*(3), 307-327.
 
-2. La inclusión de los despachos de buses como variable exógena busca representar la relación entre la oferta de servicios de transporte y la cantidad de pasajeros movilizados. La contribución de esta variable debe evaluarse mediante pruebas de significancia, comparación de modelos y validación predictiva fuera de muestra.
+- Enders, W. (2014). *Applied econometric time series* (4.ª ed.). Wiley.
 
-3. El modelo GARCH(1,1) se incluyó para estudiar la posible heterocedasticidad condicional. Su utilidad debe establecerse a partir del diagnóstico de los residuos y de las pruebas correspondientes, sin asumir que su incorporación garantiza por sí sola el cumplimiento de los supuestos del modelo.
+- Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. *Econometrica, 50*(4), 987-1007.
 
-4. El *backtesting* reporta un MAPE del 5,02 %. Este resultado constituye una medida de error predictivo para el periodo evaluado. Su interpretación depende de la longitud del periodo de prueba, del procedimiento de generación de los pronósticos y de la existencia de valores iguales o cercanos a cero.
+- Guerrero, V. M. (2003). *Análisis estadístico de series de tiempo económicas*. La información editorial debe verificarse antes de completar la referencia.
 
-5. La proyección de pasajeros para diciembre de 2026 debe considerarse una estimación del modelo y no un resultado observado. Para valorar su confiabilidad, es necesario documentar la información disponible en la fecha de estimación, los supuestos sobre los despachos futuros y los intervalos de predicción.
+- Hyndman, R. J., y Athanasopoulos, G. (2021). *Forecasting: Principles and practice* (3.ª ed.). OTexts. https://otexts.com/fpp3/
 
-## 9. Referencias bibliográficas
+---
 
-Bollerslev, T. (1986). Generalized autoregressive conditional heteroskedasticity. *Journal of Econometrics, 31*(3), 307–327.
+## 6. Reproducibilidad y mantenimiento
 
-Enders, W. (2014). *Applied econometric time series* (4th ed.). Wiley.
+Para garantizar la reproducibilidad del análisis, se recomienda conservar los archivos originales, documentar las transformaciones aplicadas a los datos y ejecutar los scripts en el orden establecido.
 
-Engle, R. F. (1982). Autoregressive conditional heteroscedasticity with estimates of the variance of United Kingdom inflation. *Econometrica, 50*(4), 987–1007.
+Asimismo, conviene mantener actualizados los archivos de configuración del entorno, registrar las versiones de las bibliotecas utilizadas y conservar las salidas necesarias para verificar los resultados del modelo.
 
-Guerrero, V. M. (2003). *Análisis estadístico de series de tiempo económicas*. Thomson.
+Antes de publicar una nueva versión del póster, compruebe que:
 
-Hyndman, R. J., & Athanasopoulos, G. (2021). *Forecasting: Principles and practice* (3rd ed.). OTexts. https://otexts.com/fpp3/
+1. Los datos procesados corresponden a los archivos originales utilizados en el análisis.
+2. Los resultados estadísticos provienen de la ejecución más reciente del modelo.
+3. Las tablas, las gráficas y los valores incluidos en el póster coinciden con los archivos generados por los scripts.
+4. El documento HTML se visualiza correctamente y sus recursos asociados están disponibles.
+5. El archivo PDF se ha generado correctamente y conserva el diseño previsto para su impresión.
+6. Las referencias bibliográficas están completas y verificadas.
 
-Kwiatkowski, D., Phillips, P. C. B., Schmidt, P., & Shin, Y. (1992). Testing the null hypothesis of stationarity against the alternative of a unit root. *Journal of Econometrics, 54*(1–3), 159–178.
+Este procedimiento permite mantener la coherencia entre los datos, el análisis econométrico, los resultados reportados y la presentación final del proyecto.
