@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Póster Académico - Luis Guevara</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Medium Zoom -->
+    <script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.8/dist/medium-zoom.min.js"></script>
+    
+    <!-- FontAwesome (iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* Animación de entrada */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body {
+            background-color: #e9ecef;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 2rem;
+        }
+
+        /* Contenedor principal del póster */
+        .poster-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-top: 10px solid #1a237e;
+            padding: 3rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Encabezado */
+        header {
+            text-align: center;
+            border-bottom: 3px solid #e0e0e0;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        header h1 {
+            color: #1a237e;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        /* Tarjetas de sección */
+        .card-section {
+            background-color: #f8f9fa;
+            border-left: 5px solid #ffc107;
+            border-radius: 0 8px 8px 0;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .card-section:hover {
+            transform: translateX(5px);
+        }
+        .card-section h2 {
+            color: #1a237e;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Imágenes con Zoom */
+        .img-zoom {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+        .img-zoom:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .caption {
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Sección de Conclusiones */
+        .conclusiones {
+            background-color: #e8eaf6;
+            border-left: 5px solid #1a237e;
+        }
+
+        /* Footer: Referencias y GitHub */
+        footer {
+            margin-top: 2rem;
+            border-top: 2px solid #e0e0e0;
+            padding-top: 1rem;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        footer h3 {
+            font-size: 1rem;
+            color: #1a237e;
+            margin-bottom: 0.5rem;
+        }
+        .github-link {
+            display: inline-block;
+            background-color: #1a237e;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 0.5rem;
+            transition: background 0.3s;
+        }
+        .github-link:hover {
+            background-color: #ffc107;
+            color: #1a237e;
+        }
+
+        /* Herramientas (Lápiz y Zoom) */
+        .tools {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1050;
+        }
+        .tool-btn {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background-color: #1a237e;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: background 0.3s;
+        }
+        .tool-btn:hover { background-color: #ffc107; color: #1a237e; }
+
+        /* Lienzo de dibujo */
+        canvas {
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 1040;
+            pointer-events: none;
+        }
+        .drawing-mode canvas { pointer-events: auto; cursor: crosshair; }
+    </style>
+</head>
+<body>
+
+    <!-- Herramientas Flotantes -->
+    <div class="tools">
+        <button class="tool-btn" onclick="toggleDraw()" title="Activar Lápiz"><i class="fas fa-pencil-alt"></i></button>
+        <button class="tool-btn" onclick="clearCanvas()" title="Borrar Lápiz"><i class="fas fa-eraser"></i></button>
+    </div>
+    <canvas id="drawingCanvas"></canvas>
+
+    <!-- Contenedor del Póster -->
+    <div class="poster-container">
+        
+        <!-- Título y Autores -->
+        <header>
+            <h1>Modelado de la Demanda de Pasajeros en Colombia (2017-2026)</h1>
+            <p><strong>Autor:</strong> Luis Guevara | <strong>Materia:</strong> Econometría II | <strong>Universidad:</strong> Nacional de Colombia</p>
+        </header>
+
+        <div class="row g-4">
+            <!-- COLUMNA IZQUIERDA -->
+            <div class="col-lg-6">
+                
+                <!-- 1. Motivación -->
+                <div class="card-section">
+                    <h2>1. Motivación Económica</h2>
+                    <p>Se analizó la serie mensual de pasajeros que salen de la Terminal de Transporte de Bogotá (2017-2026). Esta serie es un <strong>proxy de la actividad económica y la movilidad</strong> de la capital. Durante la pandemia (2020), se observó un shock estructural que afectó gravemente la demanda, el cual fue capturado mediante variables Dummy.</p>
+                </div>
+
+                <!-- 2. Metodología -->
+                <div class="card-section">
+                    <h2>2. Metodología (Box-Jenkins)</h2>
+                    <ul>
+                        <li><strong>Identificación:</strong> Pruebas ADF/KPSS y FAC/FACP.</li>
+                        <li><strong>Estimación:</strong> SARIMAX(2,1,2)(0,1,1,12) con Logaritmo, variable exógena (Despachos) y Dummies.</li>
+                        <li><strong>Validación:</strong> Ljung-Box, ARCH, Jarque-Bera y Shapiro-Wilk.</li>
+                        <li><strong>Pronóstico:</strong> 10 meses adelante.</li>
+                    </ul>
+                    <p class="mt-2 text-muted"><small><em>Referencias: Guerrero (2003), Enders (2014).</em></small></p>
+                </div>
+
+                <!-- 3. Variable Exógena y Relación -->
+                <div class="card-section">
+                    <h2>3. Relación Oferta-Demanda</h2>
+                    <img src="img/graficas/fig2_despachos.png" alt="Despachos" class="img-zoom">
+                    <p class="caption">Fig 2. Serie de Despachos (Oferta).</p>
+                    <img src="img/graficas/fig3_dispersion.png" alt="Dispersión" class="img-zoom mt-3">
+                    <p class="caption">Fig 3. Correlación positiva entre oferta y demanda.</p>
+                </div>
+
+                <!-- 4. Identificación -->
+                <div class="card-section">
+                    <h2>4. Identificación (FAC/FACP)</h2>
+                    <img src="img/graficas/fig4_fac_facp.png" alt="FAC_FACP" class="img-zoom">
+                    <p class="caption">Fig 4. Correlogramas que justifican el orden del modelo.</p>
+                </div>
+
+                <!-- 5. Estacionalidad -->
+                <div class="card-section">
+                    <h2>5. Perfil Estacional</h2>
+                    <img src="img/graficas/fig11_estacionalidad.png" alt="Estacionalidad" class="img-zoom">
+                    <p class="caption">Fig 11. Pico de demanda en diciembre (Navidad).</p>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA -->
+            <div class="col-lg-6">
+                
+                <!-- 6. Serie Histórica y Pronóstico -->
+                <div class="card-section">
+                    <h2>6. Serie Histórica y Pronóstico</h2>
+                    <img src="img/graficas/fig1_serie.png" alt="Serie" class="img-zoom">
+                    <p class="caption">Fig 1. Serie histórica de pasajeros (2017-2026).</p>
+                    <img src="img/graficas/fig6_pronostico.png" alt="Pronóstico" class="img-zoom mt-3">
+                    <p class="caption">Fig 6. Pronóstico a 10 meses con intervalos de confianza.</p>
+                </div>
+
+                <!-- 7. Validación (Residuales) -->
+                <div class="card-section">
+                    <h2>7. Validación (Residuales)</h2>
+                    <img src="img/graficas/fig8_residuos_panel.png" alt="Residuales" class="img-zoom">
+                    <p class="caption">Fig 8. Panel de diagnósticos: residuos, ACF, histograma y Q-Q plot.</p>
+                </div>
+
+                <!-- 8. Tabla de Coeficientes -->
+                <div class="card-section">
+                    <h2>8. Coeficientes del Modelo</h2>
+                    <img src="img/tablas/tabla1_coeficientes.png" alt="Tabla Coef" class="img-zoom">
+                    <p class="caption">Tabla 1. El coeficiente de Despachos (1.14) es significativo.</p>
+                </div>
+
+                <!-- 9. Tabla de Pruebas -->
+                <div class="card-section">
+                    <h2>9. Pruebas de Validación</h2>
+                    <img src="img/tablas/tabla2_pruebas.png" alt="Tabla Pruebas" class="img-zoom">
+                    <p class="caption">Tabla 2. El modelo pasa 8 de 9 pruebas de supuestos.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONCLUSIONES Y REFERENCIAS -->
+        <div class="row mt-4">
+            <div class="col-md-7">
+                <div class="card-section conclusiones">
+                    <h2>10. Conclusiones</h2>
+                    <ul>
+                        <li><strong>El shock de 2020:</strong> El cierre de la pandemia fue un evento estructural.</li>
+                        <li><strong>La oferta explica la demanda:</strong> El coeficiente de Despachos es 1.14, confirmando que la oferta de buses es un determinante clave.</li>
+                        <li><strong>Modelo robusto:</strong> El AIC de -138.70 es el mejor de 143 modelos evaluados. El modelo es válido para el pronóstico (MAPE = 5.02%).</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="card-section">
+                    <h2>11. Comparación de Candidatos</h2>
+                    <img src="img/tablas/tabla4_candidatos.png" alt="Candidatos" class="img-zoom">
+                    <p class="caption">Tabla 4. El modelo (2,1,2)(0,1,1,12) es el de menor AIC.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER: Referencias y GitHub -->
+        <footer class="mt-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>Referencias Bibliográficas</h3>
+                    <ul class="list-unstyled">
+                        <li>Guerrero, V. M. (2003). <em>Análisis estadístico de series de tiempo económicas</em>. Thomson.</li>
+                        <li>Enders, W. (2014). <em>Applied Econometric Time Series</em> (4th ed.). Wiley.</li>
+                        <li>Engle, R. F. (1982). Autoregressive Conditional Heteroscedasticity. <em>Econometrica</em>.</li>
+                        <li>Hyndman, R. J., & Athanasopoulos, G. (2021). <em>Forecasting: Principles and Practice</em> (3rd ed.). OTexts.</li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <h3>Repositorio del Proyecto</h3>
+                    <a href="https://github.com/TuUsuario/TuRepositorio" target="_blank" class="github-link">
+                        <i class="fab fa-github"></i> Ver Código en GitHub
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // 1. Efecto de Zoom en las imágenes
+        mediumZoom('.img-zoom', {
+            margin: 40,
+            background: 'rgba(0, 0, 0, 0.9)'
+        });
+
+        // 2. Lógica del Lápiz (Canvas)
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let drawingMode = false;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function toggleDraw() {
+            drawingMode = !drawingMode;
+            if (drawingMode) {
+                document.body.classList.add('drawing-mode');
+                canvas.style.pointerEvents = 'auto';
+            } else {
+                document.body.classList.remove('drawing-mode');
+                canvas.style.pointerEvents = 'none';
+            }
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (!drawingMode) return;
+            isDrawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.clientX, e.clientY);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing || !drawingMode) return;
+            ctx.lineTo(e.clientX, e.clientY);
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+            ctx.closePath();
+        });
+    </script>
+</body>
+</html>
